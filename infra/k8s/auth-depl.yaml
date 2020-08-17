@@ -24,7 +24,7 @@ spec:
   selector:
     app: auth
   ports:
-    - port: 3000
-      targetPort: 3000
-      name: auth
+    - name: auth
       protocol: TCP
+      port: 3000
+      targetPort: 3000
