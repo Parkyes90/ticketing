@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: parkyes90/auth
+          image: asia.gcr.io/ticketing-dev-287201/auth
 ---
 apiVersion: v1
 kind: Service
