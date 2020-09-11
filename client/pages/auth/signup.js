@@ -18,7 +18,6 @@ const SignUp = () => {
     event.preventDefault();
     await doRequest();
   };
-  console.log(errors);
   return (
     <form action="" onSubmit={onSubmit}>
       <h1>Sign Up</h1>
