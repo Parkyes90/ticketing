@@ -3,7 +3,7 @@ import axios from "axios";
 const buildClient = ({ req }) => {
   if (typeof window === "undefined") {
     return axios.create({
-      baseURL: "http://172.17.0.3",
+      baseURL: "http://192.168.49.2",
       headers: req.headers,
     });
   } else {
