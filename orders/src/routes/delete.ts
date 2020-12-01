@@ -6,6 +6,8 @@ import {
   requireAuth,
 } from "@pystickets/common";
 import { Order } from "../models/order";
+import { OrderCancelPublisher } from "../events/publishers/order-cancel-publisher";
+import { natsWrapper } from "../nats-wrapper";
 
 const router = express.Router();
 
@@ -14,7 +16,7 @@ router.delete(
   requireAuth,
   async (req: Request, res: Response) => {
     const { orderId } = req.params;
-    const order = await Order.findById(orderId);
+    const order = await Order.findById(orderId).populate("ticket");
     if (!order) {
       throw new NotFoundError();
     }
@@ -23,6 +25,13 @@ router.delete(
     }
     order.status = OrderStatus.Cancelled;
     order.save();
+    await new OrderCancelPublisher(natsWrapper.client).publish({
+      id: order.id,
+      ticket: {
+        id: order.ticket.id,
+        price: order.ticket.price,
+      },
+    });
     res.status(204).send(order);
   }
 );
