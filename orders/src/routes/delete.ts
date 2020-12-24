@@ -26,9 +26,9 @@ router.delete(
     order.status = OrderStatus.Cancelled;
     order.save();
     await new OrderCancelPublisher(natsWrapper.client).publish({
-      id: order.id,
+      id: order.id as string,
       ticket: {
-        id: order.ticket.id,
+        id: order.ticket.id as string,
         price: order.ticket.price,
       },
     });
