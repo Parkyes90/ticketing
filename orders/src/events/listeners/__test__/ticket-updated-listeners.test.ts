@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { set } from "mongoose";
 import { Message } from "node-nats-streaming";
 import { TicketUpdatedListener } from "../ticket-updated-listener";
 import { natsWrapper } from "../../../nats-wrapper";
@@ -36,6 +36,28 @@ const setup = async () => {
   return { msg, data, ticket, listener };
 };
 
-it("finds, updates, and saves a ticket", async () => {});
+it("finds, updates, and saves a ticket", async () => {
+  const { msg, data, ticket, listener } = await setup();
+  await listener.onMessage(data, msg);
 
-it("acks the message", async () => {});
+  const updatedTicket = await Ticket.findById(ticket.id);
+  expect(updatedTicket!.title).toEqual(data.title);
+  expect(updatedTicket!.price).toEqual(data.price);
+  expect(updatedTicket!.version).toEqual(data.version);
+});
+
+it("acks the message", async () => {
+  const { msg, data, listener } = await setup();
+  await listener.onMessage(data, msg);
+  expect(msg.ack).toHaveBeenCalled();
+});
+
+it("dose not call ack if the event has a skipped version number", async () => {
+  const { msg, data, listener, ticket } = await setup();
+  data.version = 10;
+  try {
+    await listener.onMessage(data, msg);
+  } catch (e) {
+    expect(msg.ack).not.toHaveBeenCalled();
+  }
+});
