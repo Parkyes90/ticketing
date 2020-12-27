@@ -36,6 +36,7 @@ router.post(
     if (!ticket) {
       throw new NotFoundError();
     }
+
     // Make sure that this ticket is not already reserved
     const isReserved = await ticket.isReserved();
     if (isReserved) {
@@ -54,18 +55,18 @@ router.post(
       ticket,
     });
     await order.save();
-    await new OrderCreatedPublisher(natsWrapper.client).publish({
-      id: order.id as string,
+
+    // Publish an event saying that an order was created
+    new OrderCreatedPublisher(natsWrapper.client).publish({
+      id: order.id,
       status: order.status,
       userId: order.userId,
       expiresAt: order.expiresAt.toISOString(),
       ticket: {
-        id: ticket.id as string,
+        id: ticket.id,
         price: ticket.price,
       },
     });
-
-    // Publish an event saying that an order was created
 
     res.status(201).send(order);
   }

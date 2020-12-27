@@ -9,11 +9,10 @@ interface TicketAttrs {
   price: number;
 }
 
-interface TicketDoc extends mongoose.Document {
+export interface TicketDoc extends mongoose.Document {
   title: string;
   price: number;
   version: number;
-
   isReserved(): Promise<boolean>;
 }
 
@@ -46,8 +45,10 @@ const ticketSchema = new mongoose.Schema(
     },
   }
 );
+
 ticketSchema.set("versionKey", "version");
 ticketSchema.plugin(updateIfCurrentPlugin);
+
 ticketSchema.statics.findByEvent = (event: { id: string; version: number }) => {
   return Ticket.findOne({
     _id: event.id,
@@ -62,6 +63,7 @@ ticketSchema.statics.build = (attrs: TicketAttrs) => {
   });
 };
 ticketSchema.methods.isReserved = async function () {
+  // this === the ticket document that we just called 'isReserved' on
   const existingOrder = await Order.findOne({
     ticket: this,
     status: {
@@ -72,9 +74,10 @@ ticketSchema.methods.isReserved = async function () {
       ],
     },
   });
+
   return !!existingOrder;
 };
 
 const Ticket = mongoose.model<TicketDoc, TicketModel>("Ticket", ticketSchema);
 
-export { Ticket, TicketDoc };
+export { Ticket };
