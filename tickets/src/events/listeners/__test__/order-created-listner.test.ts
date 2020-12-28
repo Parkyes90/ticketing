@@ -32,4 +32,9 @@ const setup = async () => {
   return { listener, ticket, data, msg };
 };
 
-// it("sets")
+it("sets the userId of the ticket", async () => {
+  const { listener, ticket, data, msg } = await setup();
+  await listener.onMessage(data, msg);
+  const updatedTicket = await Ticket.findById(ticket.id);
+  expect(updatedTicket!.orderId).toEqual(data.id);
+});
