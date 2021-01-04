@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Router from "next/router";
 import useRequest from "../../hooks/use-request";
 const NewTicket = () => {
   const [state, setState] = useState({
@@ -9,7 +10,7 @@ const NewTicket = () => {
     url: "/api/tickets",
     method: "post",
     body: state,
-    onSuccess: (ticket) => console.log(ticket),
+    onSuccess: () => Router.push("/"),
   });
   const onChange = (e) => {
     const { name, value } = e.target;
