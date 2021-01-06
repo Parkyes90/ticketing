@@ -8,7 +8,7 @@ const start = async () => {
   if (!process.env.MONGO_URI) {
     throw new Error("MONGO_URI must be defined");
   }
-
+  console.log("Server Startup");
   try {
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
