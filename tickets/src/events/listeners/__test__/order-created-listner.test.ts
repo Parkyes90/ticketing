@@ -1,8 +1,7 @@
 import { OrderCreatedListener } from "../order-created-listener";
 import { natsWrapper } from "../../../nats-wrapper";
 import { Ticket } from "../../../models/tickets";
-import { OrderCreatedEvent } from "@pystickets/common";
-import { OrderStatus } from "../../../../../common/src";
+import { OrderCreatedEvent, OrderStatus } from "@pystickets/common";
 import mongoose from "mongoose";
 import { Message } from "node-nats-streaming";
 
